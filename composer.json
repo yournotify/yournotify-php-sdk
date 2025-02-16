@@ -1,0 +1,28 @@
+{
+    "name": "yournotify/yournotify-php-sdk",
+    "description": "A PHP SDK for interacting with the Yournotify API.",
+    "type": "library",
+    "require": {
+        "php": ">=7.2",
+        "ext-curl": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Yournotify\\": "src/"
+        }
+    },
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yournotify"
+        }
+    ],
+    "homepage": "https://github.com/yournotify/yournotify-php-sdk",
+    "keywords": [
+        "yournotify",
+        "sdk",
+        "api",
+        "php"
+    ]
+}
