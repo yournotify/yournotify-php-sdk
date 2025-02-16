@@ -63,8 +63,8 @@ $response = $yournotify->addList('List Title');
 
 ## API Methods
 
--   `sendEmail($to, $subject, $html, $text, $from)`: Sends an email.
--   `sendSMS($to, $message, $from)`: Sends an SMS.
+-   `sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)`: Sends an email.
+-   `sendSMS($title, $subject, $text, $status, $from, $to, $name, $attribs)`: Sends an SMS.
 -   `addContact($email, $telephone, $list, $name)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
