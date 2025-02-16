@@ -88,6 +88,7 @@ $response.data.data; // Result array
 -   `addContact($email, $telephone, $list, $name, $attribs)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
+-   `getLists()`: Retrieves all lists.
 
 For more information, visit [Yournotify API documentation](https://api.yournotify.com/doc).
 
