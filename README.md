@@ -71,6 +71,16 @@ $response.data.status; // success or failed
 $response.data.data.id; // List ID
 ```
 
+### Getting Lists
+
+To retrieve all lists, use the `getLists` method:
+
+```php
+$response = $yournotify->getLists();
+$response.data.status; // success or failed
+$response.data.data; // Result array
+```
+
 ## API Methods
 
 -   `sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)`: Sends an email.
