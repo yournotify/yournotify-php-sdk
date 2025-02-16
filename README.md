@@ -46,7 +46,7 @@ $response.data.data.id; // Campaign ID
 To add a contact, use the `addContact` method:
 
 ```php
-$response = $yournotify->addContact('email@example.com', '1234567890', 'list_id', 'Contact Name');
+$response = $yournotify->addContact('email@example.com', '+2348100000000', 'list_id', 'Contact Name');
 $response.data.status; // success or failed
 $response.data.data.id; // Contact ID
 ```
@@ -79,7 +79,7 @@ $response.data.data.id; // List ID
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
 
-For more information, visit the [Yournotify API documentation](https://api.yournotify.com/doc).
+For more information, visit [Yournotify API documentation](https://api.yournotify.com/doc).
 
 ## License
 
