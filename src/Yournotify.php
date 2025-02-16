@@ -39,7 +39,7 @@ class Yournotify
         return json_decode($response, true);
     }
 
-    public function sendEmail($title, $subject, $html, $text, $from, $status, $to, $name, $attribs)
+    public function sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)
     {
         $data = [
             'name' => $title,
@@ -48,18 +48,19 @@ class Yournotify
             'text' => $text,
             'from' => $from,
             'status' => $status,
-            'lists' => [
+            'channel' => "email",
+            'lists' => array(
                 (object)[
                     "email" => $to,
                     "name" => $name,
                     "attribs" => $attribs,
                 ]
-            ],
+            ),
         ];
         return $this->request("campaigns/email", 'POST', $data);
     }
 
-    public function sendSMS($title, $subject, $text, $from, $status, $to, $name, $attribs)
+    public function sendSMS($title, $subject, $text, $status, $from, $to, $name, $attribs)
     {
         $data = [
             'name' => $title,
@@ -67,13 +68,14 @@ class Yournotify
             'text' => $text,
             'from' => $from,
             'status' => $status,
-            'lists' => [
+            'channel' => "sms",
+            'lists' => array(
                 (object)[
                     "telephone" => $to,
                     "name" => $name,
                     "attribs" => $attribs,
                 ]
-            ],
+            ),
         ];
         return $this->request("campaigns/sms", 'POST', $data);
     }

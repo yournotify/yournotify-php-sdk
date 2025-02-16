@@ -26,7 +26,7 @@ $yournotify = new Yournotify($apiKey);
 To send an email, use the `sendEmail` method:
 
 ```php
-$response = $yournotify->sendEmail('recipient@example.com', 'Subject', '<h1>Hello</h1>', 'Hello', 'sender@example.com');
+$response = $yournotify->sendEmail('Title', 'Subject', '<h1>Hello</h1>', 'Hello', 'running', 'sender@example.com', 'recipient@example.com', 'Name', 'object{key => value}');
 ```
 
 ### Sending an SMS
@@ -34,7 +34,7 @@ $response = $yournotify->sendEmail('recipient@example.com', 'Subject', '<h1>Hell
 To send an SMS, use the `sendSMS` method:
 
 ```php
-$response = $yournotify->sendSMS('recipient_phone_number', 'Your message here', 'sender_name');
+$response = $yournotify->sendSMS('Title', 'sender_id', 'Hello', 'running', '+2348100000000', 'Name', 'object{key => value}');
 ```
 
 ### Adding a Contact
@@ -68,6 +68,8 @@ $response = $yournotify->addList('List Title');
 -   `addContact($email, $telephone, $list, $name)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
+
+For more information, visit the [YourNotify API documentation](https://api.yournotify.com/doc).
 
 ## License
 
