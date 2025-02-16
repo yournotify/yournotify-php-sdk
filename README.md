@@ -27,6 +27,8 @@ To send an email, use the `sendEmail` method:
 
 ```php
 $response = $yournotify->sendEmail('Title', 'Subject', '<h1>Hello</h1>', 'Hello', 'running', 'sender@example.com', 'recipient@example.com', 'Name', 'object{key => value}');
+$response.data.status; // success or failed
+$response.data.data.id; // Campaign ID
 ```
 
 ### Sending an SMS
@@ -35,6 +37,8 @@ To send an SMS, use the `sendSMS` method:
 
 ```php
 $response = $yournotify->sendSMS('Title', 'sender_id', 'Hello', 'running', '+2348100000000', 'Name', 'object{key => value}');
+$response.data.status; // success or failed
+$response.data.data.id; // Campaign ID
 ```
 
 ### Adding a Contact
@@ -43,6 +47,8 @@ To add a contact, use the `addContact` method:
 
 ```php
 $response = $yournotify->addContact('email@example.com', '1234567890', 'list_id', 'Contact Name');
+$response.data.status; // success or failed
+$response.data.data.id; // Contact ID
 ```
 
 ### Getting Contacts
@@ -51,6 +57,8 @@ To retrieve all contacts, use the `getContacts` method:
 
 ```php
 $response = $yournotify->getContacts();
+$response.data.status; // success or failed
+$response.data.data; // Result array
 ```
 
 ### Adding a List
@@ -59,13 +67,15 @@ To add a new list, use the `addList` method:
 
 ```php
 $response = $yournotify->addList('List Title');
+$response.data.status; // success or failed
+$response.data.data.id; // List ID
 ```
 
 ## API Methods
 
 -   `sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)`: Sends an email.
 -   `sendSMS($title, $subject, $text, $status, $from, $to, $name, $attribs)`: Sends an SMS.
--   `addContact($email, $telephone, $list, $name)`: Adds a contact to a list.
+-   `addContact($email, $telephone, $list, $name, $attribs)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
 
