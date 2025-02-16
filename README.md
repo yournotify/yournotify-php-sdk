@@ -66,7 +66,7 @@ $response.data.data; // Result array
 To add a new list, use the `addList` method:
 
 ```php
-$response = $yournotify->addList('List Title');
+$response = $yournotify->addList('Title', 'public', 'single');
 $response.data.status; // success or failed
 $response.data.data.id; // List ID
 ```
@@ -87,7 +87,7 @@ $response.data.data; // Result array
 -   `sendSMS($title, $subject, $text, $status, $from, $to, $name, $attribs)`: Sends an SMS.
 -   `addContact($email, $telephone, $list, $name, $attribs)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
--   `addList($title)`: Creates a new list.
+-   `addList($title, $type, $optin)`: Creates a new list.
 -   `getLists()`: Retrieves all lists.
 
 For more information, visit [Yournotify API documentation](https://api.yournotify.com/doc).
