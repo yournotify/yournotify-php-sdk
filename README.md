@@ -69,7 +69,7 @@ $response = $yournotify->addList('List Title');
 -   `getContacts()`: Retrieves all contacts.
 -   `addList($title)`: Creates a new list.
 
-For more information, visit the [YourNotify API documentation](https://api.yournotify.com/doc).
+For more information, visit the [Yournotify API documentation](https://api.yournotify.com/doc).
 
 ## License
 
