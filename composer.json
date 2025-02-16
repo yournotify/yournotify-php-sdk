@@ -1,6 +1,6 @@
 {
     "name": "yournotify/yournotify-php-sdk",
-    "description": "A PHP SDK for interacting with Yournotify API. Send email and SMS marketing campaigns with ease.",
+    "description": "A PHP SDK for interacting with Yournotify API. Send email and sms marketing campaigns with ease.",
     "type": "library",
     "require": {
         "php": ">=7.2",
