@@ -15,82 +15,106 @@ To use the Yournotify SDK, you need to include the autoload file and create an i
 ```php
 require 'vendor/autoload.php';
 
-use Yournotify\Yournotify;
-
 $apiKey = 'your_api_key_here';
 $yournotify = new Yournotify($apiKey);
 ```
 
+## Available Methods
+
 ### Sending an Email
 
-To send an email, use the `sendEmail` method:
-
 ```php
-$response = $yournotify->sendEmail('Title', 'Subject', '<h1>Hello</h1>', 'Hello', 'running', 'sender@example.com', 'recipient@example.com', 'Name', 'object{key => value}');
-$response.data.status; // success or failed
-$response.data.data.id; // Campaign ID
+$response = $yournotify->sendEmail('Title', 'Subject', '<h1>Hello</h1>', 'Hello', 'running', 'sender@example.com', 'recipient@example.com', 'Name', ['key' => 'value']);
+print_r($response);
 ```
 
 ### Sending an SMS
 
-To send an SMS, use the `sendSMS` method:
-
 ```php
-$response = $yournotify->sendSMS('Title', 'sender_id', 'Hello', 'running', '+2348100000000', 'Name', 'object{key => value}');
-$response.data.status; // success or failed
-$response.data.data.id; // Campaign ID
+$response = $yournotify->sendSMS('Title', 'Subject', 'Hello', 'running', 'SENDER_ID', '+2348100000000', 'Name', ['key' => 'value']);
+print_r($response);
 ```
 
 ### Adding a Contact
 
-To add a contact, use the `addContact` method:
-
 ```php
-$response = $yournotify->addContact('email@example.com', '+2348100000000', 'list_id', 'Contact Name');
-$response.data.status; // success or failed
-$response.data.data.id; // Contact ID
+$response = $yournotify->addContact('email@example.com', '+2348100000000', 'list_id', 'Contact Name', ['key' => 'value']);
+print_r($response);
 ```
 
-### Getting Contacts
-
-To retrieve all contacts, use the `getContacts` method:
+### Getting All Contacts
 
 ```php
 $response = $yournotify->getContacts();
-$response.data.status; // success or failed
-$response.data.data; // Result array
+print_r($response);
+```
+
+### Deleting a Contact
+
+```php
+$response = $yournotify->deleteContact(123);
+print_r($response);
 ```
 
 ### Adding a List
 
-To add a new list, use the `addList` method:
-
 ```php
 $response = $yournotify->addList('Title', 'public', 'single');
-$response.data.status; // success or failed
-$response.data.data.id; // List ID
+print_r($response);
 ```
 
-### Getting Lists
-
-To retrieve all lists, use the `getLists` method:
+### Getting All Lists
 
 ```php
 $response = $yournotify->getLists();
-$response.data.status; // success or failed
-$response.data.data; // Result array
+print_r($response);
 ```
 
-## API Methods
+### Deleting a List
+
+```php
+$response = $yournotify->deleteList(456);
+print_r($response);
+```
+
+### Deleting a Campaign
+
+```php
+$response = $yournotify->deleteCampaign(789);
+print_r($response);
+```
+
+### Getting Campaign Stats
+
+```php
+$response = $yournotify->getCampaignStats(123, 'email');
+print_r($response);
+```
+
+### Getting Campaign Reports
+
+```php
+$response = $yournotify->getCampaignReports(123, 'sms');
+print_r($response);
+```
+
+## API Methods Reference
 
 -   `sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)`: Sends an email.
 -   `sendSMS($title, $subject, $text, $status, $from, $to, $name, $attribs)`: Sends an SMS.
 -   `addContact($email, $telephone, $list, $name, $attribs)`: Adds a contact to a list.
 -   `getContacts()`: Retrieves all contacts.
+-   `deleteContact($id)`: Deletes a contact by ID.
 -   `addList($title, $type, $optin)`: Creates a new list.
 -   `getLists()`: Retrieves all lists.
+-   `deleteList($id)`: Deletes a list by ID.
+-   `deleteCampaign($id)`: Deletes a campaign by ID.
+-   `getCampaignStats($ids, $channel)`: Retrieves campaign statistics.
+-   `getCampaignReports($ids, $channel)`: Retrieves campaign reports.
 
-For more information, visit [Yournotify API documentation](https://api.yournotify.com/doc).
+## More Information
+
+For full API reference, visit the [Yournotify API Documentation](https://api.yournotify.com/doc).
 
 ## License
 

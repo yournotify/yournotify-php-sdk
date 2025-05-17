@@ -49,13 +49,13 @@ class Yournotify
             'from' => $from,
             'status' => $status,
             'channel' => "email",
-            'lists' => array(
+            'lists' => [
                 (object)[
                     "email" => $to,
                     "name" => $name,
                     "attribs" => $attribs,
                 ]
-            ),
+            ],
         ];
         return $this->request("campaigns/email", 'POST', $data);
     }
@@ -69,13 +69,13 @@ class Yournotify
             'from' => $from,
             'status' => $status,
             'channel' => "sms",
-            'lists' => array(
+            'lists' => [
                 (object)[
                     "telephone" => $to,
                     "name" => $name,
                     "attribs" => $attribs,
                 ]
-            ),
+            ],
         ];
         return $this->request("campaigns/sms", 'POST', $data);
     }
@@ -102,6 +102,11 @@ class Yournotify
         return $this->request("contacts", 'GET');
     }
 
+    public function deleteContact($id)
+    {
+        return $this->request("contacts/" . $id, 'DELETE');
+    }
+
     public function addList($title, $type, $optin)
     {
         $data = [
@@ -120,5 +125,27 @@ class Yournotify
     public function getLists()
     {
         return $this->request("lists", 'GET');
+    }
+
+    public function deleteList($id)
+    {
+        return $this->request("lists/" . $id, 'DELETE');
+    }
+
+    public function deleteCampaign($id)
+    {
+        return $this->request("campaigns/" . $id, 'DELETE');
+    }
+
+    public function getCampaignStats($ids, $channel = 'email')
+    {
+        $idParam = is_array($ids) ? implode(',', $ids) : $ids;
+        return $this->request("campaigns/analytics/stats?id={$idParam}&channel={$channel}", 'GET');
+    }
+
+    public function getCampaignReports($ids, $channel = 'email')
+    {
+        $idParam = is_array($ids) ? implode(',', $ids) : $ids;
+        return $this->request("campaigns/analytics/reports?id={$idParam}&channel={$channel}", 'GET');
     }
 }
