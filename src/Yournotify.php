@@ -196,13 +196,22 @@ class Yournotify
     public function getRewardProducts($params = []) { return $this->request('rewards/products', 'GET', $params); }
     public function getRewardAnalytics($id) { return $this->request("rewards/{$id}/analytics", 'GET'); }
     public function getRewardSubmissions($id, $params = []) { return $this->request("rewards/{$id}/submissions", 'GET', $params); }
+    public function inviteToReward($id, $data = []) { return $this->request("rewards/{$id}/invite", 'POST', $data); }
+    public function sendCreatedReward($id, $data = []) { return $this->request("rewards/{$id}/send", 'POST', $data); }
+    public function getRewardBulkJob($id, $jobId) { return $this->request("rewards/{$id}/bulk-jobs/{$jobId}", 'GET'); }
+    public function retryRewardBulkJob($id, $jobId) { return $this->request("rewards/{$id}/bulk-jobs/{$jobId}/retry", 'POST', []); }
+    public function bootstrapRewardClaim($data = []) { return $this->request('rewards/reward', 'POST', $data); }
+    public function submitRewardClaim($data = []) { return $this->request('rewards/submit', 'POST', $data); }
     public function getLoyaltyPrograms($params = []) { return $this->request('loyalty/programs', 'GET', $params); }
     public function getLoyaltyProgram($id) { return $this->request("loyalty/programs/{$id}", 'GET'); }
     public function createLoyaltyProgram($data = []) { return $this->request('loyalty/programs', 'POST', $data); }
     public function updateLoyaltyProgram($id, $data = []) { return $this->request("loyalty/programs/{$id}", 'PUT', $data); }
     public function getLoyaltyMembers($id, $params = []) { return $this->request("loyalty/programs/{$id}/members", 'GET', $params); }
+    public function getLoyaltyMember($id, $subscriberId) { return $this->request("loyalty/programs/{$id}/members/{$subscriberId}", 'GET'); }
     public function adjustLoyaltyPoints($id, $data = []) { return $this->request("loyalty/programs/{$id}/points", 'POST', $data); }
     public function trackLoyaltyEvent($id, $data = []) { return $this->request("loyalty/programs/{$id}/events", 'POST', $data); }
+    public function addLoyaltyRule($id, $data = []) { return $this->request("loyalty/programs/{$id}/rules", 'POST', $data); }
+    public function connectLoyaltyReward($id, $data = []) { return $this->request("loyalty/programs/{$id}/rewards", 'POST', $data); }
     public function redeemLoyaltyReward($id, $data = []) { return $this->request("loyalty/programs/{$id}/redeem", 'POST', $data); }
     public function getReferralPrograms($params = []) { return $this->request('referrals/programs', 'GET', $params); }
     public function getReferralProgram($id) { return $this->request("referrals/programs/{$id}", 'GET'); }
@@ -211,8 +220,14 @@ class Yournotify
     public function deleteReferralProgram($id) { return $this->request("referrals/programs/{$id}", 'DELETE'); }
     public function getReferralAdvocates($id, $params = []) { return $this->request("referrals/programs/{$id}/advocates", 'GET', $params); }
     public function addReferralAdvocate($id, $data = []) { return $this->request("referrals/programs/{$id}/advocates", 'POST', $data); }
+    public function addReferralAdvocatesFromLists($id, $data = []) { return $this->request("referrals/programs/{$id}/advocates/bulk", 'POST', $data); }
+    public function removeReferralAdvocate($id, $advocateId) { return $this->request("referrals/programs/{$id}/advocates/{$advocateId}", 'DELETE'); }
     public function trackReferralEvent($id, $data = []) { return $this->request("referrals/programs/{$id}/events", 'POST', $data); }
     public function getReferralAnalytics($id, $params = []) { return $this->request("referrals/programs/{$id}/analytics", 'GET', $params); }
+    public function retryReferralConversion($id, $conversionId) { return $this->request("referrals/programs/{$id}/conversions/{$conversionId}/retry", 'POST', []); }
+    public function reviewReferralConversion($id, $conversionId, $data = []) { return $this->request("referrals/programs/{$id}/conversions/{$conversionId}/review", 'POST', $data); }
+    public function getReferralRisk($id) { return $this->request("referrals/programs/{$id}/risk", 'GET'); }
+    public function createAdvocatePortalSession($id, $advocateId) { return $this->request("referrals/programs/{$id}/advocates/{$advocateId}/portal-session", 'POST', []); }
     public function identify($data = []) { return $this->request('automations/identify', 'POST', $data); }
     public function track($data = []) { return $this->request('automations/events', 'POST', $data); }
 }
