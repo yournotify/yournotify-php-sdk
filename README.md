@@ -1,5 +1,7 @@
 # Yournotify PHP SDK
 
+PHP SDK for the current Yournotify API.
+
 ## Installation
 
 To install the Yournotify PHP SDK, you can use Composer. Run the following command in your terminal:
@@ -15,8 +17,8 @@ To use the Yournotify SDK, you need to include the autoload file and create an i
 ```php
 require 'vendor/autoload.php';
 
-$apiKey = 'your_api_key_here';
-$yournotify = new Yournotify($apiKey);
+$yournotify = new Yournotify\Yournotify('YOURNOTIFY_API_KEY');
+$yournotify->validateAuth();
 ```
 
 ## Available Methods
@@ -28,11 +30,30 @@ $response = $yournotify->sendEmail('Title', 'Subject', '<h1>Hello</h1>', 'Hello'
 print_r($response);
 ```
 
+### Creating a Campaign
+
+```php
+$response = $yournotify->createCampaign([
+	'name' => 'WhatsApp campaign',
+	'channel' => 'whatsapp',
+	'template_id' => 'template_123',
+]);
+```
+
 ### Sending an SMS
 
 ```php
 $response = $yournotify->sendSMS('Title', 'Subject', 'Hello', 'running', 'SENDER_ID', '+2348100000000', 'Name', ['key' => 'value']);
 print_r($response);
+```
+
+### WhatsApp, Push, and In-App
+
+```php
+$yournotify->sendWhatsApp(['name' => 'WhatsApp', 'template_id' => 'template_123']);
+$yournotify->sendPush(['name' => 'Push', 'title' => 'Hello', 'body' => 'Welcome']);
+$yournotify->sendInApp(['name' => 'In-app', 'title' => 'Hello', 'body' => 'Welcome']);
+$yournotify->testCampaign(['channel' => 'email', 'email' => 'person@example.com']);
 ```
 
 ### Adding a Contact
@@ -111,6 +132,10 @@ print_r($response);
 -   `deleteCampaign($id)`: Deletes a campaign by ID.
 -   `getCampaignStats($ids, $channel)`: Retrieves campaign statistics.
 -   `getCampaignReports($ids, $channel)`: Retrieves campaign reports.
+-   `getRewards($params)`, `createReward($data)`, `sendReward($data)`: Works with rewards.
+-   `identify($data)`, `track($data)`: Sends automation identity and event data.
+
+Non-2xx responses throw `RuntimeException` with the response status code when available.
 
 ## More Information
 
