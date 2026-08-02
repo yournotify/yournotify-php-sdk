@@ -230,11 +230,11 @@ class Yournotify
     public function reviewReferralConversion($id, $conversionId, $data = []) { return $this->request("referrals/programs/{$id}/conversions/{$conversionId}/review", 'POST', $data); }
     public function getReferralRisk($id) { return $this->request("referrals/programs/{$id}/risk", 'GET'); }
     public function createAdvocatePortalSession($id, $advocateId) { return $this->request("referrals/programs/{$id}/advocates/{$advocateId}/portal-session", 'POST', []); }
-    public function identify($data = []) { return $this->request('automations/identify', 'POST', $data); }
+    public function identify($data = []) { return $this->request('sdk/identify', 'POST', $data); }
     private function normalizeEvent($data) { $data = is_array($data) ? $data : []; $data['event_id'] = $data['event_id'] ?? $data['idempotency_key'] ?? bin2hex(random_bytes(16)); $data['occurred_at'] = $data['occurred_at'] ?? gmdate('Y-m-d\TH:i:s.v\Z'); return $data; }
-    public function track($data = []) { return $this->request('automations/events', 'POST', $this->normalizeEvent($data)); }
-    public function trackBatch($events = [], $options = []) { return $this->request('automations/events/batch', 'POST', array_merge($options, ['events' => array_map([$this, 'normalizeEvent'], $events)])); }
-    public function aliasContact($data = []) { return $this->request('automations/alias', 'POST', $data); }
+    public function track($data = []) { return $this->request('sdk/events', 'POST', $this->normalizeEvent($data)); }
+    public function trackBatch($events = [], $options = []) { return $this->request('sdk/events/batch', 'POST', array_merge($options, ['events' => array_map([$this, 'normalizeEvent'], $events)])); }
+    public function aliasContact($data = []) { return $this->request('sdk/alias', 'POST', $data); }
     public function contactSummary($params = []) { return $this->request('contacts/summary', 'GET', $params); }
     public function createContactSession($data = []) { return $this->request('contacts/session', 'POST', $data); }
     public function exportList($id, $params = []) { return $this->request("lists/export/{$id}", 'GET', $params); }
