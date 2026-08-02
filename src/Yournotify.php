@@ -4,6 +4,8 @@ class Yournotify
 {
     private $apiKey;
     private $apiUrl = "https://api.yournotify.com/";
+    private $timeout = 30;
+    private $maxRetries = 2;
 
     public function __construct($apiKey)
     {
@@ -16,6 +18,9 @@ class Yournotify
         return $this;
     }
 
+    public function setTimeout($seconds) { $this->timeout = max(1, (int) $seconds); return $this; }
+    public function setMaxRetries($attempts) { $this->maxRetries = max(0, (int) $attempts); return $this; }
+
     private function request($endpoint, $method = 'GET', $data = [])
     {
         $method = strtoupper($method);
@@ -23,39 +28,35 @@ class Yournotify
         if ($method === 'GET' && !empty($data)) {
             $url .= (strpos($url, '?') !== false ? '&' : '?') . http_build_query($data);
         }
-        $ch = curl_init($url);
-
         $headers = [
             "Authorization: Bearer " . $this->apiKey,
             "Content-Type: application/json"
         ];
+        $idempotencyKey = is_array($data) ? ($data['idempotency_key'] ?? $data['event_id'] ?? null) : null;
+        if ($idempotencyKey) $headers[] = "Idempotency-Key: " . $idempotencyKey;
+        $retryable = in_array($method, ['GET', 'HEAD', 'PUT', 'DELETE'], true) || !empty($idempotencyKey);
 
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        for ($attempt = 0; ; $attempt++) {
+            $ch = curl_init($url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+            if ($method === 'POST') curl_setopt($ch, CURLOPT_POST, true);
+            elseif ($method !== 'GET') curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $method);
+            if (!in_array($method, ['GET', 'HEAD', 'DELETE'], true)) curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
 
-        if ($method === 'POST') {
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        } elseif ($method === 'PUT') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PUT");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        } elseif ($method === 'PATCH') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "PATCH");
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        } elseif ($method === 'DELETE') {
-            curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+            $response = curl_exec($ch);
+            $curlError = curl_error($ch);
+            $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
+            curl_close($ch);
+            $body = json_decode($response ?: '{}', true) ?: [];
+            if ($status >= 200 && $status < 300) return $body;
+            $canRetry = $retryable && $attempt < $this->maxRetries && ($status === 0 || $status === 429 || $status >= 500);
+            if (!$canRetry) {
+                throw new \RuntimeException($body['message'] ?? ($curlError ?: "Yournotify API request failed with status {$status}."), $status);
+            }
+            usleep(250000 * (2 ** $attempt));
         }
-
-        $response = curl_exec($ch);
-        $status = curl_getinfo($ch, CURLINFO_RESPONSE_CODE);
-        curl_close($ch);
-
-        $body = json_decode($response ?: '{}', true) ?: [];
-        if ($status < 200 || $status >= 300) {
-            throw new \RuntimeException($body['message'] ?? "Yournotify API request failed with status {$status}.", $status);
-        }
-
-        return $body;
     }
 
     private function normalizeList($value, $key)
@@ -70,6 +71,7 @@ class Yournotify
     public function validateAuth() { return $this->request('auth/me'); }
     public function getProfile() { return $this->validateAuth(); }
     public function createCampaign($data = []) { return $this->request('campaigns', 'POST', $data); }
+    public function sendVoice($data = []) { return $this->request('campaigns/voice', 'POST', $data); }
 
     public function sendEmail($title, $subject, $html, $text, $status, $from, $to, $name, $attribs)
     {
@@ -229,5 +231,21 @@ class Yournotify
     public function getReferralRisk($id) { return $this->request("referrals/programs/{$id}/risk", 'GET'); }
     public function createAdvocatePortalSession($id, $advocateId) { return $this->request("referrals/programs/{$id}/advocates/{$advocateId}/portal-session", 'POST', []); }
     public function identify($data = []) { return $this->request('automations/identify', 'POST', $data); }
-    public function track($data = []) { return $this->request('automations/events', 'POST', $data); }
+    private function normalizeEvent($data) { $data = is_array($data) ? $data : []; $data['event_id'] = $data['event_id'] ?? $data['idempotency_key'] ?? bin2hex(random_bytes(16)); $data['occurred_at'] = $data['occurred_at'] ?? gmdate('Y-m-d\TH:i:s.v\Z'); return $data; }
+    public function track($data = []) { return $this->request('automations/events', 'POST', $this->normalizeEvent($data)); }
+    public function trackBatch($events = [], $options = []) { return $this->request('automations/events/batch', 'POST', array_merge($options, ['events' => array_map([$this, 'normalizeEvent'], $events)])); }
+    public function aliasContact($data = []) { return $this->request('automations/alias', 'POST', $data); }
+    public function contactSummary($params = []) { return $this->request('contacts/summary', 'GET', $params); }
+    public function createContactSession($data = []) { return $this->request('contacts/session', 'POST', $data); }
+    public function exportList($id, $params = []) { return $this->request("lists/export/{$id}", 'GET', $params); }
+    public function retryListImport($id) { return $this->request("lists/{$id}/import/requeue", 'POST', []); }
+    public static function verifyWebhook($payload, $signature, $timestamp, $secret, $tolerance = 300)
+    {
+        $parts = []; foreach (explode(',', (string) $signature) as $part) { if (strpos($part, '=') !== false) { [$key, $value] = explode('=', $part, 2); $parts[$key] = $value; } }
+        $timestamp = $timestamp ?: ($parts['t'] ?? ''); $signature = $parts['v1'] ?? $signature;
+        if (!$signature || !$timestamp || !$secret || abs(time() - (int) $timestamp) > $tolerance) return false;
+        $raw = is_string($payload) ? $payload : json_encode($payload);
+        $expected = hash_hmac('sha256', $timestamp . '.' . $raw, $secret);
+        return hash_equals($expected, preg_replace('/^sha256=/', '', $signature));
+    }
 }
